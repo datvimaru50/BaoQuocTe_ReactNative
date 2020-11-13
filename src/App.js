@@ -7,6 +7,7 @@
  */
 
 import React, { useState } from 'react';
+import { WebView } from 'react-native-webview';
 import {
   SafeAreaView,
   StyleSheet,
@@ -19,16 +20,17 @@ import {
 } from 'react-native';
 
 import {
-  Header,
   LearnMoreLinks,
   Colors,
   DebugInstructions,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-import { TabView, SceneMap } from 'react-native-tab-view';
 
 import ScrollableTabView, { ScrollableTabBar }  from "react-native-scrollable-tab-view";
+
+import Footer from "./components/Footer";
+import Header from "./components/Header";
 
 
 const ICON_SIZE = {width: 24, height: 24};
@@ -81,8 +83,6 @@ const App: () => React$Node = () => {
 
   function handleScroll({nativeEvent}){
     const slide = Math.ceil(nativeEvent.contentOffset.x / nativeEvent.layoutMeasurement.width);
-    // setActiveSlide(activeSlide ++);
-    // console.log(slide);
     if(slide !== activeSlide){
       setActiveSlide(slide);
     }
@@ -91,7 +91,7 @@ const App: () => React$Node = () => {
   return (
     <>
       <StatusBar barStyle="dark-content" networkActivityIndicatorVisible={true} showHideTransition={"slide"} />
-      <SafeAreaView>
+      <SafeAreaView style={{flex: 1}}>
         <ScrollView
           nestedScrollEnabled
           contentInsetAdjustmentBehavior="automatic"
@@ -105,40 +105,12 @@ const App: () => React$Node = () => {
 
           <View style={styles.body}>
             {/* ***************************
-                      TOP BANNER
+                       HEADER
             ******************************/}
-            <View>
-              <Image 
-                source={require("./assets/2618_Mobile_banner_ABA.png")} 
-                style={{width: "100%", height: "auto", aspectRatio: 728/90}}
-              />
-            </View>
+            <Header />
 
             {/* ***************************
-                       LOGO BAR 
-            ******************************/}
-            <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center" ,paddingHorizontal: GUTTER, paddingVertical: 5,}}>
-              <Image 
-                source={require("./assets/icons/menu.png")} 
-              />
-              <Text style={{marginLeft: -20}}>English</Text>
-              <Image 
-                source={require("./assets/logo-mb.png")} 
-                {...ICON_SIZE}
-              />
-              <Image 
-                source={require("./assets/icons/call-phone.png")} 
-                {...ICON_SIZE}
-                style={{marginRight: -20}}
-              />
-              <Image 
-                source={require("./assets/icons/moon.png")} 
-                {...ICON_SIZE}
-              />
-            </View>
-
-            {/* ***************************
-                       TOPIC BAR 
+                      TOPIC BAR 
             ******************************/}
             <View style={styles.topicBar}>
              
@@ -204,7 +176,7 @@ const App: () => React$Node = () => {
             {/* ***************************
                       QUỐC TẾ TV
             ******************************/}
-            <VideoLayout imageTitleIcon />
+            <VideoLayout iconPlay imageTitleIcon />
 
             {/* ***************************
                        TIN NÓNG 2
@@ -263,18 +235,73 @@ const App: () => React$Node = () => {
 
             <CategoryLayout1 mainTitle="Hồ sơ" />
 
-            <VideoLayout mainTitle="Video" />
+            <VideoLayout iconPlay mainTitle="Video" />
 
             <View style={{...styles.sectionContainer, flexDirection: "row", justifyContent: "space-between"}}>
               <CategoryLayout2 mainTitle="Thời sự" width="48%" />
               <CategoryLayout2 mainTitle="Xã hội" width="48%" />
             </View>
 
+            <View style={{...styles.sectionContainer, flexDirection: "row", justifyContent: "space-between"}}>
+              <CategoryLayout2 mainTitle="Giải trí" width="48%" />
+              <CategoryLayout2 mainTitle="Thể thao" width="48%" />
+            </View>
 
+            <VideoLayout mainTitle="Tin ảnh" />
 
+            <View style={{...styles.sectionContainer, flexDirection: "row", justifyContent: "space-between"}}>
+              <CategoryLayout2 mainTitle="Góc nhìn nhân quyền" width="48%" />
+              <CategoryLayout2 mainTitle="Văn hóa" width="48%" />
+            </View>
 
+            <View style={{...styles.sectionContainer, flexDirection: "row", justifyContent: "space-between"}}>
+              <CategoryLayout2 mainTitle="Người Việt" width="48%" />
+              <CategoryLayout2 mainTitle="Khoa học - Công nghệ" width="48%" />
+            </View>
+
+            <CategoryTabScroll mainTitle="Ô tô +" />
+
+            {/* ***************************
+                       FOOTER 
+            ******************************/}
+            <Footer />
           </View>
         </ScrollView>
+
+        <View style={{flexDirection: "row", justifyContent: "space-between", padding: 10, backgroundColor: "#fff"}}>
+
+          <View style={styles.buttonContainer}>
+            <Image 
+              style={styles.buttonIcon}
+              source={require("./assets/icons/home.png")}
+            />
+            <Text>Trang chủ</Text>
+          </View>
+
+          <View style={styles.buttonContainer}>
+            <Image 
+              style={styles.buttonIcon}
+              source={require("./assets/icons/flag.png")}
+            />
+            <Text>Chủ đề</Text>
+          </View>
+
+          <View style={styles.buttonContainer}>
+            <Image 
+              style={styles.buttonIcon}
+              source={require("./assets/icons/bell.png")}
+            />
+            <Text>Tin mới</Text>
+          </View>
+          <View style={styles.buttonContainer}>
+            <Image 
+              style={styles.buttonIcon}
+              source={require("./assets/icons/menu-black.png")}
+            />
+            <Text>Danh mục</Text>
+          </View>
+           
+        </View>
       </SafeAreaView>
     </>
   );
@@ -303,10 +330,13 @@ function VideoLayout(props){
                 style={{width: "100%", height: "100%"}}
                 source={{uri: "https://baoquocte.vn/stores/video_data/dangtuan/102020/30/21/medium/3602_unnamed_edit.png"}}
               />
-              <Image 
-                style={{width: 69, height: "auto", aspectRatio: 1, position: "absolute", top: "50%", left: "50%", marginTop: -34.5, marginLeft: -34.5}}
-                source={require("./assets/icons/ico-play-x.png")}
-              />
+              {
+                props.iconPlay &&
+                <Image 
+                  style={{width: 69, height: "auto", aspectRatio: 1, position: "absolute", top: "50%", left: "50%", marginTop: -34.5, marginLeft: -34.5}}
+                  source={require("./assets/icons/ico-play-x.png")}
+                />
+              }
             </View>
             <Text style={{fontSize: 18}}>TRỰC TUYẾN: Con đường Ngoại giao - MOFA Open Day 2020</Text>
           </View>
@@ -480,6 +510,14 @@ function BlueBullet(){
   ======================
 */
 const styles = StyleSheet.create({
+  buttonContainer: {
+    alignItems: "center"
+  },
+  buttonIcon: {
+    width: 24, 
+    height: 24, 
+    marginBottom: 5
+  },
   imgWide: {
     width: "100%",
     aspectRatio: 16/9
@@ -537,6 +575,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover"
   },
   slidePaging: {
+    padding: 3,
     position: "absolute",
     right: 0,
     bottom: 0
